@@ -1,0 +1,45 @@
+<html>
+<head>
+<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+</head>
+<body onload="initfirebase()">
+<script>
+  var jobs;
+
+  function initfirebase() {
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyBOLILFHMKwaP23o7lVWjXw6lV7bmlTEIY",
+      authDomain: "webcompat-sysaddon-autotest.firebaseapp.com",
+      databaseURL: "https://webcompat-sysaddon-autotest.firebaseio.com",
+      storageBucket: "webcompat-sysaddon-autotest.appspot.com",
+      messagingSenderId: "471034119574"
+    };
+    firebase.initializeApp(config);  
+    firebase.database().ref("/job").once('value').then(function(snapshot){
+      jobs = snapshot.val();
+
+      for (let job_name in jobs) {
+        let job = jobs[job_name];
+        let job_div = document.createElement("div");
+
+        job_div.appendChild(document.createTextNode(job_name.toString()));
+        
+
+        for (let build_number in job) {
+          let build = job[build_number];
+          let build_div = document.createElement("div");
+          build_div.appendChild(document.createTextNode("Build " + build_number.toString() +
+            " is " + build.result +
+            " at " + new Date(build.timestamp).toUTCString()));
+
+          job_div.appendChild(build_div);
+        }
+
+        document.body.appendChild(job_div);
+      }
+    });
+  }
+</script>
+</body>
+</html>
