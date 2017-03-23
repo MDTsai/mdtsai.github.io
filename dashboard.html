@@ -1,45 +1,67 @@
-<html>
+<!DOCTYPE html>
+<html lang="en-US">
 <head>
-<script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-</head>
-<body onload="initfirebase()">
-<script>
-  var jobs;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebCompat System Addon Autotest result Dashboard</title>
+  <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <style>
+    .build_title{
+      float:left;
+      margin: 5px;
+      padding: 5px;
+      border-radius: 8px;
+      color: white;
+    }
+    .build_title.build_success {
+      background-color: green;
+    }
+    .build_title.build_failure {
+      background-color: red;
+    }
+  </style>
+  <script>
+    $(window).load(function() {
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBOLILFHMKwaP23o7lVWjXw6lV7bmlTEIY",
+        authDomain: "webcompat-sysaddon-autotest.firebaseapp.com",
+        databaseURL: "https://webcompat-sysaddon-autotest.firebaseio.com",
+        storageBucket: "webcompat-sysaddon-autotest.appspot.com",
+        messagingSenderId: "471034119574"
+      };
+      firebase.initializeApp(config);
+      // Get all from /job/$(JOB_NAME)/$(BUILD_NUMBER)/{result: $(RESULT), timestampe: $(TIMESTAMP)}
+      firebase.database().ref("/job").once('value').then(function(snapshot){
+        var jobs = snapshot.val();
 
-  function initfirebase() {
-    // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyBOLILFHMKwaP23o7lVWjXw6lV7bmlTEIY",
-      authDomain: "webcompat-sysaddon-autotest.firebaseapp.com",
-      databaseURL: "https://webcompat-sysaddon-autotest.firebaseio.com",
-      storageBucket: "webcompat-sysaddon-autotest.appspot.com",
-      messagingSenderId: "471034119574"
-    };
-    firebase.initializeApp(config);  
-    firebase.database().ref("/job").once('value').then(function(snapshot){
-      jobs = snapshot.val();
+        for (let job_name in jobs) {
+          let job = jobs[job_name];
+          let job_title = $("<h3>" + job_name.toString() +"</h3>");
+          let job_div = $("<div></div>");
 
-      for (let job_name in jobs) {
-        let job = jobs[job_name];
-        let job_div = document.createElement("div");
+          job_div.addClass("adv");
 
-        job_div.appendChild(document.createTextNode(job_name.toString()));
-        
+          for (let build_number in job) {
+            let build = job[build_number];
+            let build_title = $("<span>Build " + build_number.toString() + "</span>");
 
-        for (let build_number in job) {
-          let build = job[build_number];
-          let build_div = document.createElement("div");
-          build_div.appendChild(document.createTextNode("Build " + build_number.toString() +
-            " is " + build.result +
-            " at " + new Date(build.timestamp).toUTCString()));
+            build_title.addClass("build_title");
+            (build.result == "SUCCESS") ? build_title.addClass("build_success") : build_title.addClass("build_failure");
+            build_title.attr("title", build.result + " at " + new Date(build.timestamp).toUTCString());
 
-          job_div.appendChild(build_div);
+            job_div.prepend(build_title);
+          }
+
+          $("body").append(job_title);
+          $("body").append(job_div);
         }
-
-        document.body.appendChild(job_div);
-      }
+      });
     });
-  }
-</script>
+  </script>
+</head>
+<body>
 </body>
 </html>
