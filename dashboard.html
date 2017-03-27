@@ -22,6 +22,9 @@
     .build_title.build_failure {
       background-color: red;
     }
+    .build_title.toggle_button {
+      background-color: DodgerBlue;
+    }
   </style>
   <script>
     $(window).load(function() {
@@ -42,8 +45,8 @@
           let job = jobs[job_name];
           let job_title = $("<h3>" + job_name.toString() +"</h3>");
           let job_div = $("<div></div>");
-
-          job_div.addClass("adv");
+          let toggle_button = $("<div>Show More >></div>");
+          toggle_button.addClass("build_title toggle_button");
 
           for (let build_number in job) {
             let build = job[build_number];
@@ -70,8 +73,17 @@
             job_div.prepend(build_title);
           }
 
+          job_div.children().filter(":gt(4)").hide();
+          toggle_button.click(function(){
+            job_div.children().filter(":gt(4)").toggle();
+            toggle_button.text(function(i, text) {
+              return text === "Show More >>" ? "Show Less <<" : "Show More >>";
+            });
+          });
+
           $("body").append(job_title);
           $("body").append(job_div);
+          $("body").append(toggle_button);
         }
       });
 
