@@ -7,6 +7,7 @@
   <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
   <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
   <style>
     .build_title{
       float:left;
@@ -51,6 +52,20 @@
             build_title.addClass("build_title");
             (build.result == "SUCCESS") ? build_title.addClass("build_success") : build_title.addClass("build_failure");
             build_title.attr("title", build.result + " at " + new Date(build.timestamp).toUTCString());
+            build_title.data("job_name", job_name);
+            build_title.data("build_number", build_number);
+            build_title.click(function() {
+              firebase.database().ref("/job_console/" + build_title.data("job_name") + "/" +
+                build_title.data("build_number")).once('value').then(function(snapshot){
+                  let result = snapshot.val();
+                  if(result != null) {
+                    $("#console_output").html(result.output.replace(new RegExp("\n", 'g'), "<br>"));
+                  } else {
+                    $("#console_output").html("No console output for this build.");
+                  }
+                  $("#dialog").dialog("open");
+                })
+            });
 
             job_div.prepend(build_title);
           }
@@ -59,9 +74,20 @@
           $("body").append(job_div);
         }
       });
+
+      $("#dialog").dialog({
+        autoOpen: false,
+        modal: true,
+        resizable: false,
+        title: "Console Output",
+        width: 'auto'
+      });
     });
   </script>
 </head>
 <body>
+  <div id="dialog" title="Console Output">
+    <p id="console_output"></p>
+  </div>
 </body>
 </html>
