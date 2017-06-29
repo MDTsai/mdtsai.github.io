@@ -25,6 +25,9 @@
     .build_title.toggle_button {
       background-color: DodgerBlue;
     }
+    h3 p {
+      padding-top: 20px;
+    }
   </style>
   <script>
     $(window).load(function() {
@@ -43,7 +46,7 @@
 
         for (let job_name in jobs) {
           let job = jobs[job_name];
-          let job_title = $("<h3>" + job_name.toString() +"</h3>");
+          let job_title = $("<h3 style='clear:both;'><p>" + job_name.toString() +"</p></h3>");
           let job_div = $("<div></div>");
           let toggle_button = $("<div>Show More >></div>");
           toggle_button.addClass("build_title toggle_button");
