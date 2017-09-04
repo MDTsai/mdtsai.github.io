@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>-webkit-appearance Test Festival</title>
+  <style>
+	  body{
+		  
+		}
+		section {
+		  margin: 1em;
+		  padding: 1em;
+		  background-color: white;
+		  border: 1px solid #eee;
+		}
+		table, td {
+			border: 1px solid black;
+		}
+  </style>
+  </head>
+ 	<body>
+  	<h1>-webkit-appearance values on different elements, and their types</h1>
+		<div id="elements">
+    
+		</div>
+		<script>
+  	var inputTypes = [
+	    "button",
+	    "checkbox",
+	    "color",
+	    "date",
+	    "datetime-local",
+	    "email",
+	    "file",
+	    "hidden",
+	    "image",
+	    "month",
+	    "number",
+	    "password",
+	    "radio",
+	    "range",
+	    "reset",
+	    "search",
+	    "submit",
+	    "tel",
+	    "text",
+	    "time",
+	    "url",
+	    "week",
+		];
+
+		var buttonTypes = [
+		    "button",
+		    "menu",
+		    "reset",
+		    "submit",
+		];
+
+		var selectTypes = [
+		    "multiple",
+		];
+
+		var elements = [
+		    {"name": "button", "types": buttonTypes, "htmlText": "button"},
+		    {"name": "div", "types": null, "htmlText": "div"},
+		    {"name": "img", "types": null, "src": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7"},
+		    {"name": "input", "types": inputTypes},
+		    {"name": "meter", "types": null},
+		    {"name": "output", "types": null, "htmlText": "output"},
+		    {"name": "progress", "types": null},
+		    {"name": "select", "types": selectTypes, "htmlText": "<option>killing me softly</option>"},
+		    {"name": "span", "types": null, "htmlText": "span"},
+		    {"name": "textarea", "types": null},
+		];
+
+		let appearanceValues = [
+		  "button",
+		  "none",
+		  "textfield",
+    	"checkbox",
+    	"menulist-button",
+    	"menulist",
+ 			"radio",
+    	"caret",
+    	"initial",
+    	"inherit",
+    	"listbox",
+    	"square-button"
+		];
+
+		let elms = document.getElementById("elements");
+
+		function createElm(value, type="", appearanceValue=null) {
+		  var elm = document.createElement(value.name);
+		  elm.type = type;
+		  if (value.htmlText) {
+	      elm.innerHTML = value.htmlText;
+	    }
+
+	    if (value.src) {
+	      elm.src = value.src;
+	    }
+
+	    if (appearanceValue) {
+	    	elm.setAttribute("style", `-webkit-appearance: ${appearanceValue}`);
+	    }
+
+		  return elm;
+		}
+
+		function createTh() {
+			var tr = document.createElement("tr");
+			let th = document.createElement("th");
+			th.innerHTML = "type";
+			tr.appendChild(th);
+			appearanceValues.forEach((appearanceValue) => {
+				let th = document.createElement("th");
+				th.innerHTML = appearanceValue;
+				tr.appendChild(th);
+			});
+
+			return tr;
+		}
+
+		elements.forEach(function(value) {
+			let section = document.createElement("section");
+
+	    let title = document.createElement("h2");
+			title.innerHTML = value.name;
+	    let elm = createElm(value);  // Reference element
+
+	    elms.appendChild(section);
+	    section.appendChild(title);
+	    section.appendChild(elm);
+
+	    // with type/webkit appearance elements
+	    let table = document.createElement("table");
+
+	    // Print types
+	    table.appendChild(createTh());
+
+	    if (value.types !== null) {
+	    	value.types.forEach((type) => {
+	    		let tr = document.createElement("tr");
+	    		let td = document.createElement("td");
+	    		let typep = document.createElement("p");
+	    		typep.innerHTML = type;
+	    		td.appendChild(typep);
+	    		tr.appendChild(td);
+
+	    		// Generate type with appearance values
+	    		
+			    appearanceValues.forEach((appearanceValue) => {
+			    	let td = document.createElement("td");
+			    	let elm = createElm(value, type, appearanceValue);
+			      td.appendChild(elm);
+				    tr.appendChild(td); 
+				  });
+
+	    		table.appendChild(tr);
+	    	});
+	    } else {
+	    	let tr = document.createElement("tr");
+	    	let td = document.createElement("td");
+	    	let na = document.createElement("p");
+	    	na.innerHTML = "N/A";
+	    	td.appendChild(na);
+	    	tr.appendChild(td);
+
+	    	// Generate type with appearance values
+		    appearanceValues.forEach((appearanceValue) => {
+		    	let td = document.createElement("td");
+			    let elm = createElm(value, "", appearanceValue);
+		      td.appendChild(elm);
+			    tr.appendChild(td); 
+			  });
+
+		    table.appendChild(tr);
+	    }
+		  
+	    section.appendChild(table);
+		});
+	  </script>
+	</body>
+</html>
